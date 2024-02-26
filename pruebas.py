@@ -130,6 +130,3 @@ def createaccount():
                 databasexlsx.save(databasedir) 
                 return 0
     print("No existe ese usuario.")
-
-activeuser = "72193101B"
-createaccount()
