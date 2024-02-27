@@ -14,6 +14,9 @@ admin = False
 #volveremos a la instancia principal.
 
 def register():
+    #Accedemos a las variables globales
+    global activeuser
+
     #Abrimos la base de datos
     databasexlsx = openpyxl.load_workbook(databasedir)
     database = databasexlsx["login"]
@@ -43,7 +46,9 @@ def register():
                 if database.cell(row=dni, column=1).value == None:
                     database.cell(row=dni, column=1).value = user
                     database.cell(row=dni, column=2).value = pwd2
-                    databasexlsx.save(databasedir) 
+                    databasexlsx.save(databasedir)
+                    #Nos damos por logueados
+                    activeuser = user
                     break
         else:
             print("Las contraseñas no coinciden.")
@@ -162,15 +167,14 @@ def checkaccounts():
                 #Recorremos la lista de cuentas
                 for acc in range(2, 1048576):
                     #Si el usuario coincide con el dueño de la cuenta mostramos los datos por pantalla
-                    if database.cell(row=acc, column = 3) == user:
-                        print(f"La cuenta {database.cell(row=acc, column = 1).value} del usuario {user} tiene {database.cell(row=acc, column = 2)}")
+                    if database.cell(row=acc, column = 3).value == user:
+                        print(f"La cuenta {database.cell(row=acc, column = 1).value} del usuario {user} tiene {database.cell(row=acc, column = 2).value}€")
     else:
         #Recorremos la lista de cuentas
         for acc in range(2, 1048576):
             #Si el usuario coincide con el dueño de la cuenta mostramos los datos por pantalla
-            if database.cell(row=acc, column = 3) == activeuser:
-                print(f"La cuenta {database.cell(row=acc, column = 1).value} del usuario {activeuser} tiene {database.cell(row=acc, column = 2)}")
-    print("No existe ese usuario.")
+            if database.cell(row=acc, column = 3).value == activeuser:
+                print(f"La cuenta {database.cell(row=acc, column = 1).value} del usuario {activeuser} tiene {database.cell(row=acc, column = 2).value}€")
 
 def deposit():
     #Accedemos a las variables globales
@@ -194,8 +198,8 @@ def deposit():
                 #Recorremos la lista de cuentas
                 for acc in range(2, 1048576):
                     #Si el usuario coincide con el dueño de la cuenta mostramos los datos por pantalla
-                    if database.cell(row=acc, column = 3) == user:
-                        print(f"La cuenta {database.cell(row=acc, column = 1).value} del usuario {user} tiene {database.cell(row=acc, column = 2)}")
+                    if database.cell(row=acc, column = 3).value == user:
+                        print(f"La cuenta {database.cell(row=acc, column = 1).value} del usuario {user} tiene {database.cell(row=acc, column = 2).value}€")
         
         #Preguntamos a que cuenta ingresar y cuanto ingresar
         account = input("¿En qué cuenta quieres ingresar el dinero?: ")
@@ -203,17 +207,18 @@ def deposit():
 
         #Buscamos la cuenta indicada
         for acc in range(2, 1048576):
-            if database.cell(row=acc, column = 1) == account:
+            if database.cell(row=acc, column = 1).value == account:
                 #Actualizamos la columna del dinero
                 database.cell(row=acc, column = 2).value += money
-                databasexlsx.save(databasedir) 
+                databasexlsx.save(databasedir)
+                print("success")
                 return 0
     else:
         #Recorremos la lista de cuentas
         for acc in range(2, 1048576):
             #Si el usuario coincide con el dueño de la cuenta mostramos los datos por pantalla
-            if database.cell(row=acc, column = 3) == activeuser:
-                print(f"La cuenta {database.cell(row=acc, column = 1).value} del usuario {activeuser} tiene {database.cell(row=acc, column = 2)}")
+            if database.cell(row=acc, column = 3).value == activeuser:
+                print(f"La cuenta {database.cell(row=acc, column = 1).value} del usuario {activeuser} tiene {database.cell(row=acc, column = 2).value}€")
             
         #Preguntamos a que cuenta ingresar y cuanto ingresar
         account = input("¿En qué cuenta quieres ingresar el dinero?: ")
@@ -221,12 +226,13 @@ def deposit():
 
         #Buscamos la cuenta indicada
         for acc in range(2, 1048576):
-            if (database.cell(row=acc, column = 1).value == account) and (database.cell(row=acc, column = 3) == activeuser):
+            if (database.cell(row=acc, column = 1).value == account) and (database.cell(row=acc, column = 3).value == activeuser):
                 #Actualizamos la columna del dinero
                 database.cell(row=acc, column = 2).value += money
                 databasexlsx.save(databasedir)
+                print("success")
                 return 0
-            elif (database.cell(row=acc, column = 1).value == account) and (database.cell(row=acc, column = 3) != activeuser):
+            elif (database.cell(row=acc, column = 1).value == account) and (database.cell(row=acc, column = 3).value != activeuser):
                 print("Esa no es tu cuenta. Intenta nuevamente.")
                 return 0
     print("No existe ese usuario.")
@@ -253,8 +259,8 @@ def withdrawal():
                 #Recorremos la lista de cuentas
                 for acc in range(2, 1048576):
                     #Si el usuario coincide con el dueño de la cuenta mostramos los datos por pantalla
-                    if database.cell(row=acc, column = 3) == user:
-                        print(f"La cuenta {database.cell(row=acc, column = 1).value} del usuario {user} tiene {database.cell(row=acc, column = 2)}")
+                    if database.cell(row=acc, column = 3).value == user:
+                        print(f"La cuenta {database.cell(row=acc, column = 1).value} del usuario {user} tiene {database.cell(row=acc, column = 2).value}€")
         
         #Preguntamos a que cuenta retirar y cuanto retirar
         account = input("¿De qué cuenta quieres retirar el dinero?: ")
@@ -262,11 +268,12 @@ def withdrawal():
 
         #Buscamos la cuenta indicada
         for acc in range(2, 1048576):
-            if database.cell(row=acc, column = 1) == account:
+            if database.cell(row=acc, column = 1).value == account:
                 if database.cell(row=acc, column = 2).value >= money:
                     #Actualizamos la columna del dinero
                     database.cell(row=acc, column = 2).value -= money
                     databasexlsx.save(databasedir)
+                    print("success")
                     return 0
                 else:
                     print("No hay suficiente dinero.")
@@ -275,8 +282,8 @@ def withdrawal():
         #Recorremos la lista de cuentas
         for acc in range(2, 1048576):
             #Si el usuario coincide con el dueño de la cuenta mostramos los datos por pantalla
-            if database.cell(row=acc, column = 3) == activeuser:
-                print(f"La cuenta {database.cell(row=acc, column = 1).value} del usuario {activeuser} tiene {database.cell(row=acc, column = 2)}")
+            if database.cell(row=acc, column = 3).value == activeuser:
+                print(f"La cuenta {database.cell(row=acc, column = 1).value} del usuario {activeuser} tiene {database.cell(row=acc, column = 2).value}€")
             
         #Preguntamos a que cuenta retirar y cuanto retirar
         account = input("¿De qué cuenta quieres retirar el dinero?: ")
@@ -284,26 +291,26 @@ def withdrawal():
 
         #Buscamos la cuenta indicada
         for acc in range(2, 1048576):
-            if (database.cell(row=acc, column = 1).value == account) and (database.cell(row=acc, column = 3) == activeuser):
+            if (database.cell(row=acc, column = 1).value == account) and (database.cell(row=acc, column = 3).value == activeuser):
                 if database.cell(row=acc, column = 2).value >= money:
                     #Actualizamos la columna del dinero
                     database.cell(row=acc, column = 2).value -= money
                     databasexlsx.save(databasedir)
+                    print("success")
                     return 0
                 else:
                     print("No hay suficiente dinero.")
                     return 0
-            elif (database.cell(row=acc, column = 1).value == account) and (database.cell(row=acc, column = 3) != activeuser):
+            elif (database.cell(row=acc, column = 1).value == account) and (database.cell(row=acc, column = 3).value != activeuser):
                 print("Esa no es tu cuenta. Intenta nuevamente.")
                 return 0
     print("No existe ese usuario.")
-
 
 #Ciclo de programa
 while True:
     #Si no hay un usuario activo, se muestra el menú de login/register
     if  activeuser == "":  
-        print("====================================================")
+        print("\n====================================================")
         print("//                   ARTIBANK SL                  //")
         print("//  1.Iniciar sesión                              //")
         print("//  2.Registrar usuario                           //")
@@ -322,10 +329,9 @@ while True:
             print("No es una opción válida.\n")
     #Si hay un usuario activo, se muestra el menú de login/register
     else:
-        print("====================================================")
+        print("\n====================================================")
         print("//                   ARTIBANK SL                  //")
-        print(f"//                   {activeuser}                  //")
-        print("//                                                //")
+        print(f"//                    {activeuser}                   //")
         print("//  1.Chequear cuentas        4.Depositar         //")
         print("//  2.Crear cuentas           5.Retirar           //")
         print("//  3.Saldo total             6.Transferencia     //")
