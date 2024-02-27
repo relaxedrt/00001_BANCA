@@ -22,7 +22,7 @@ def register():
     print("====================================================")
 
     #Pedimos el dni al usuario
-    user = input("-Introduzca su dni:")
+    user = input("-Introduzca su dni: ")
 
     #Comparamos el dni con la base de datos
     for dni in range(2, 1048576):
@@ -35,8 +35,8 @@ def register():
             dniexists = False
     #Si no existia el dni en nuestra base de datos pedimos la contraseña
     if not dniexists:
-        pwd1 = input("-Introduzca su contraseña:")
-        pwd2 = input("-Vuelva a introducir su contraseña:")
+        pwd1 = input("-Introduzca su contraseña: ")
+        pwd2 = input("-Vuelva a introducir su contraseña: ")
         if pwd1 == pwd2:
             pwdmissmatch = False
             for dni in range(2, 1048576):
@@ -65,8 +65,8 @@ def login():
     print("====================================================")
 
     #Pedimos el dni y la contraseña al usuario
-    user = input("-Introduzca su dni:")
-    pwd =  input("-Introduzca su contraseña:")
+    user = input("-Introduzca su dni: ")
+    pwd =  input("-Introduzca su contraseña: ")
 
     #Comparamos los valores con los de la base de datos
     for dni in range(2, 1048576):
@@ -130,3 +130,158 @@ def createaccount():
                 databasexlsx.save(databasedir) 
                 return 0
     print("No existe ese usuario.")
+
+def checkaccounts():
+    #Accedemos a las variables globales
+    global activeuser
+    global admin
+
+    #Abrimos la base de datos
+    databasexlsx = openpyxl.load_workbook(databasedir)
+    database = databasexlsx["accounts"]
+    users = databasexlsx["login"]
+
+    print("====================================================")
+    print("//                   ARTIBANK SL                  //")
+    print("====================================================")
+    
+    if admin:
+        user = input("A que usuario desea ver las cuentas?: ")
+        for usr in range(2, 1048576):
+            #Comprobamos que exista ese usuario
+            if users.cell(row=usr, column=1).value == user:
+                #Recorremos la lista de cuentas
+                for acc in range(2, 1048576):
+                    #Si el usuario coincide con el dueño de la cuenta mostramos los datos por pantalla
+                    if database.cell(row=acc, column = 3) == user:
+                        print(f"La cuenta {database.cell(row=acc, column = 1).value} del usuario {user} tiene {database.cell(row=acc, column = 2)}")
+    else:
+        #Recorremos la lista de cuentas
+        for acc in range(2, 1048576):
+            #Si el usuario coincide con el dueño de la cuenta mostramos los datos por pantalla
+            if database.cell(row=acc, column = 3) == activeuser:
+                print(f"La cuenta {database.cell(row=acc, column = 1).value} del usuario {activeuser} tiene {database.cell(row=acc, column = 2)}")
+    print("No existe ese usuario.")
+
+def deposit():
+    #Accedemos a las variables globales
+    global activeuser
+    global admin
+
+    #Abrimos la base de datos
+    databasexlsx = openpyxl.load_workbook(databasedir)
+    database = databasexlsx["accounts"]
+    users = databasexlsx["login"]
+
+    print("====================================================")
+    print("//                   ARTIBANK SL                  //")
+    print("====================================================")
+    
+    if admin:
+        user = input("¿En qué usuario quiere realizar el depósito?: ")
+        for usr in range(2, 1048576):
+            #Comprobamos que exista ese usuario
+            if users.cell(row=usr, column=1).value == user:
+                #Recorremos la lista de cuentas
+                for acc in range(2, 1048576):
+                    #Si el usuario coincide con el dueño de la cuenta mostramos los datos por pantalla
+                    if database.cell(row=acc, column = 3) == user:
+                        print(f"La cuenta {database.cell(row=acc, column = 1).value} del usuario {user} tiene {database.cell(row=acc, column = 2)}")
+        
+        #Preguntamos a que cuenta ingresar y cuanto ingresar
+        account = input("¿En qué cuenta quieres ingresar el dinero?: ")
+        money = int(input("¿Cuanto dinero quires ingresar?: "))
+
+        #Buscamos la cuenta indicada
+        for acc in range(2, 1048576):
+            if database.cell(row=acc, column = 1) == account:
+                #Actualizamos la columna del dinero
+                database.cell(row=acc, column = 2).value += money
+                break
+    else:
+        #Recorremos la lista de cuentas
+        for acc in range(2, 1048576):
+            #Si el usuario coincide con el dueño de la cuenta mostramos los datos por pantalla
+            if database.cell(row=acc, column = 3) == activeuser:
+                print(f"La cuenta {database.cell(row=acc, column = 1).value} del usuario {activeuser} tiene {database.cell(row=acc, column = 2)}")
+            
+        #Preguntamos a que cuenta ingresar y cuanto ingresar
+        account = input("¿En qué cuenta quieres ingresar el dinero?: ")
+        money = int(input("¿Cuanto dinero quires ingresar?: "))
+
+        #Buscamos la cuenta indicada
+        for acc in range(2, 1048576):
+            if (database.cell(row=acc, column = 1).value == account) and (database.cell(row=acc, column = 3) == activeuser):
+                #Actualizamos la columna del dinero
+                database.cell(row=acc, column = 2).value += money
+                break
+            elif (database.cell(row=acc, column = 1).value == account) and (database.cell(row=acc, column = 3) != activeuser):
+                print("Esa no es tu cuenta. Intenta nuevamente.")
+                break
+    print("No existe ese usuario.")
+
+def withdrawal():
+    #Accedemos a las variables globales
+    global activeuser
+    global admin
+
+    #Abrimos la base de datos
+    databasexlsx = openpyxl.load_workbook(databasedir)
+    database = databasexlsx["accounts"]
+    users = databasexlsx["login"]
+
+    print("====================================================")
+    print("//                   ARTIBANK SL                  //")
+    print("====================================================")
+    
+    if admin:
+        user = input("¿En qué usuario quiere realizar el depósito?: ")
+        for usr in range(2, 1048576):
+            #Comprobamos que exista ese usuario
+            if users.cell(row=usr, column=1).value == user:
+                #Recorremos la lista de cuentas
+                for acc in range(2, 1048576):
+                    #Si el usuario coincide con el dueño de la cuenta mostramos los datos por pantalla
+                    if database.cell(row=acc, column = 3) == user:
+                        print(f"La cuenta {database.cell(row=acc, column = 1).value} del usuario {user} tiene {database.cell(row=acc, column = 2)}")
+        
+        #Preguntamos a que cuenta retirar y cuanto retirar
+        account = input("¿De qué cuenta quieres retirar el dinero?: ")
+        money = int(input("¿Cuanto dinero quires retirar?: "))
+
+        #Buscamos la cuenta indicada
+        for acc in range(2, 1048576):
+            if database.cell(row=acc, column = 1) == account:
+                if database.cell(row=acc, column = 2).value >= money:
+                    #Actualizamos la columna del dinero
+                    database.cell(row=acc, column = 2).value -= money
+                    break
+                else:
+                    print("No hay suficiente dinero.")
+                    break
+    else:
+        #Recorremos la lista de cuentas
+        for acc in range(2, 1048576):
+            #Si el usuario coincide con el dueño de la cuenta mostramos los datos por pantalla
+            if database.cell(row=acc, column = 3) == activeuser:
+                print(f"La cuenta {database.cell(row=acc, column = 1).value} del usuario {activeuser} tiene {database.cell(row=acc, column = 2)}")
+            
+        #Preguntamos a que cuenta retirar y cuanto retirar
+        account = input("¿De qué cuenta quieres retirar el dinero?: ")
+        money = int(input("¿Cuanto dinero quires retirar?: "))
+
+        #Buscamos la cuenta indicada
+        for acc in range(2, 1048576):
+            if (database.cell(row=acc, column = 1).value == account) and (database.cell(row=acc, column = 3) == activeuser):
+                if database.cell(row=acc, column = 2).value >= money:
+                    #Actualizamos la columna del dinero
+                    database.cell(row=acc, column = 2).value -= money
+                    break
+                else:
+                    print("No hay suficiente dinero.")
+                    break
+            elif (database.cell(row=acc, column = 1).value == account) and (database.cell(row=acc, column = 3) != activeuser):
+                print("Esa no es tu cuenta. Intenta nuevamente.")
+                break
+    print("No existe ese usuario.")
+
