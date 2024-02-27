@@ -1,3 +1,16 @@
-Añadir las siguientes opciones que aun no están activas:
-3.Crear comprobadora de dinero total
-6.Crear transferencias entre cuentas
+Programa de simulación de un banco con distintas funciones.
+Entre las funciones encontramos:
+-Sistema de autentificación del usuario
+-Sistema de creación de usuarios
+-Sistema de creación de cuentas
+-Sistema de depositos y retiradas
+-Sistema de transferencias bancarias
+-Sistema de comprobación del balance
+-Sistema de borrado de cuentas
+-Modo admin
+
+Para poder ejecutar el programa se requiere tener Python 3 instalado en su máquina,
+así como la biblioteca openpyxl y secrets.
+
+Si se te ocurre cualquier función nueva que pueda añadir o tienes cualquier problema
+no dudes en contactarme: rodrigotejeria01@gmail.com
